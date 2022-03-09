@@ -2,7 +2,7 @@
 //  Date+Today.swift
 //  Today
 //
-//  Created by Семен Колесников on 08.03.2022.
+//  Created by Sem Koliesnikov on 08.03.2022.
 //
 
 import Foundation

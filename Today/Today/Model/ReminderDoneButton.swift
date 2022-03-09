@@ -2,7 +2,7 @@
 //  ReminderDoneButton.swift
 //  Today
 //
-//  Created by Семен Колесников on 09.03.2022.
+//  Created by Sem Koliesnikov on 09.03.2022.
 //
 
 import UIKit
