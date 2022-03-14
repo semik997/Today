@@ -30,7 +30,7 @@ extension ReminderListViewController {
     
     
     func cellRegistrationHandler(cell: UICollectionViewListCell, indexPath: IndexPath, id: Reminder.ID) {
-        let reminder = reminder(for: id)
+        let reminder = reminderIndex(for: id)
         var contentConfiguration = cell.defaultContentConfiguration()
         contentConfiguration.text = reminder.title
         contentConfiguration.secondaryText = reminder.dueDate.dayAndTimeText
@@ -49,9 +49,9 @@ extension ReminderListViewController {
     }
     
     func completeReminder(with id: Reminder.ID) {
-        var reminder = reminder(for: id)
+        var reminder = reminderIndex(for: id)
         reminder.isComplete.toggle()
-        update(reminder, with: id)
+        updateReminders(reminder, with: id)
         updateSnapshot(reloading: [id])
     }
     
@@ -78,12 +78,21 @@ extension ReminderListViewController {
         
     }
     
-    func reminder(for id: Reminder.ID) -> Reminder {
+    func addReminder(_ reminder: Reminder) {
+        reminders.append(reminder)
+    }
+    
+    func deleteRemainder(with id: Reminder.ID) {
+        let index = reminders.indexOfReminder(with: id)
+        reminders.remove(at: index)
+    }
+    
+    func reminderIndex(for id: Reminder.ID) -> Reminder {
         let index = reminders.indexOfReminder(with: id)
         return reminders[index]
     }
     
-    func update(_ reminder: Reminder, with id: Reminder.ID) {
+    func updateReminders(_ reminder: Reminder, with id: Reminder.ID) {
         let index = reminders.indexOfReminder(with: id)
         reminders[index] = reminder
     }

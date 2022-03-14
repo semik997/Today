@@ -12,11 +12,20 @@ class ReminderViewController: UICollectionViewController {
     private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Row>
     
     
-    var reminder: Reminder
     private var dataSourse: DataSourse!
+    var workingReminder: Reminder
+    var isAddingNewReminder = false
+    var onChange: (Reminder) -> Void
+    var reminder: Reminder {
+        didSet {
+            onChange(reminder)
+        }
+    }
     
-    init(remainder: Reminder) {
+    init(remainder: Reminder, onChange: @escaping (Reminder) -> Void) {
         self.reminder = remainder
+        self.workingReminder = remainder
+        self.onChange = onChange
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
         listConfiguration.showsSeparators = false
         listConfiguration.headerMode = .firstItemInSection
@@ -44,9 +53,13 @@ class ReminderViewController: UICollectionViewController {
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         if editing {
-            updateSnapshotForEditing()
+            prepearForEditing()
         } else {
-            updateSnapshotForViewing()
+            if !isAddingNewReminder {
+                prepareForViewing()
+            } else {
+                onChange(workingReminder)
+            }
         }
     }
     
@@ -71,6 +84,16 @@ class ReminderViewController: UICollectionViewController {
         cell.tintColor = .todayPrimaryTint
     }
     
+    @objc private func didCancelEdit() {
+        workingReminder = reminder
+        setEditing(false, animated: true)
+    }
+    
+    private func prepearForEditing() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didCancelEdit))
+        updateSnapshotForEditing()
+    }
+    
     private func updateSnapshotForEditing() {
         var snapshot = Snapshot()
         snapshot.appendSections([.title, .date, .notes])
@@ -80,6 +103,15 @@ class ReminderViewController: UICollectionViewController {
         dataSourse.apply(snapshot)
     }
     
+    private func prepareForViewing() {
+        navigationItem.leftBarButtonItem = nil
+        if workingReminder != reminder {
+            reminder = workingReminder
+        }
+            
+        
+        updateSnapshotForViewing()
+    }
     
     private func updateSnapshotForViewing() {
         var snapshot = Snapshot()
